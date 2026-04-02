@@ -1,0 +1,121 @@
+<div
+  class="task-card"
+  [class.completed]="task.completed"
+  [class.overdue]="isOverdue"
+  [style.--priority-color]="priorityInfo.color"
+  [style.--category-color]="categoryInfo.color"
+>
+  <!-- Priority Bar -->
+  <div class="priority-bar"></div>
+
+  <!-- Card Header -->
+  <div class="card-header">
+    <button class="check-btn" (click)="toggleComplete()" [class.checked]="task.completed">
+      <span class="material-icons-round">{{ task.completed ? 'check_circle' : 'radio_button_unchecked' }}</span>
+    </button>
+
+    <div class="task-meta">
+      <span class="category-badge" [style.background]="categoryInfo.color + '22'" [style.color]="categoryInfo.color">
+        <span class="material-icons-round">{{ categoryInfo.icon }}</span>
+        {{ task.category }}
+      </span>
+
+      <span class="priority-badge" [style.background]="priorityInfo.color + '22'" [style.color]="priorityInfo.color">
+        <span class="material-icons-round">{{ priorityInfo.icon }}</span>
+        {{ priorityInfo.label }}
+      </span>
+    </div>
+
+    <div class="card-actions">
+      <button class="action-btn ai-btn" (click)="toggleSuggestion()" title="AI Suggestion">
+        <span class="material-icons-round">auto_awesome</span>
+      </button>
+      <button class="action-btn" (click)="onEdit()" title="Edit">
+        <span class="material-icons-round">edit</span>
+      </button>
+      <button class="action-btn delete-btn" (click)="confirmDelete()" title="Delete">
+        <span class="material-icons-round">delete_outline</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Task Title & Description -->
+  <div class="card-body">
+    <h3 class="task-title">{{ task.title }}</h3>
+    @if (task.description) {
+      <p class="task-desc">{{ task.description }}</p>
+    }
+  </div>
+
+  <!-- Tags -->
+  @if (task.tags.length > 0) {
+    <div class="tag-list">
+      @for (tag of task.tags; track tag) {
+        <span class="tag">#{{ tag }}</span>
+      }
+    </div>
+  }
+
+  <!-- Footer -->
+  <div class="card-footer">
+    @if (task.bestTime) {
+      <div class="best-time">
+        <span class="material-icons-round">schedule</span>
+        {{ task.bestTime }}
+      </div>
+    }
+
+    @if (task.dueDate) {
+      <div class="due-date" [class.overdue-text]="isOverdue">
+        <span class="material-icons-round">{{ isOverdue ? 'warning' : 'event' }}</span>
+        {{ dueDateLabel }}
+      </div>
+    }
+  </div>
+
+  <!-- AI Suggestion Panel -->
+  @if (showSuggestion()) {
+    <div class="ai-panel">
+      <div class="ai-panel-header">
+        <span class="material-icons-round">psychology</span>
+        <span>Smart AI Suggestion</span>
+      </div>
+      @if (task.bestTime) {
+        <div class="ai-row">
+          <span class="material-icons-round">access_time</span>
+          <div>
+            <strong>Best Time:</strong> {{ task.bestTime }}
+          </div>
+        </div>
+      }
+      @if (aiReason) {
+        <div class="ai-row">
+          <span class="material-icons-round">lightbulb</span>
+          <div>
+            <strong>Why:</strong> {{ aiReason }}
+          </div>
+        </div>
+      }
+      @if (aiTip) {
+        <div class="ai-row tip">
+          <span class="material-icons-round">tips_and_updates</span>
+          <div>
+            <strong>Tip:</strong> {{ aiTip }}
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Delete Confirm -->
+  @if (showDeleteConfirm()) {
+    <div class="delete-confirm">
+      <span class="material-icons-round warn-icon">warning_amber</span>
+      <p>Delete this task?</p>
+      <div class="confirm-actions">
+        <button class="btn-no" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-yes" (click)="doDelete()">Delete</button>
+      </div>
+    </div>
+  }
+</div>

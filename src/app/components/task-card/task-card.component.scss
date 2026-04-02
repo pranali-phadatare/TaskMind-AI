@@ -1,0 +1,329 @@
+.task-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  animation: cardIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &:hover {
+    border-color: var(--priority-color);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3), 0 0 0 1px color-mix(in srgb, var(--priority-color) 20%, transparent);
+    transform: translateY(-2px);
+  }
+
+  &.completed {
+    opacity: 0.6;
+    .task-title { text-decoration: line-through; color: var(--text-muted); }
+    .priority-bar { background: #555 !important; }
+  }
+
+  &.overdue {
+    border-color: rgba(231, 76, 60, 0.5);
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      box-shadow: inset 0 0 0 1px rgba(231, 76, 60, 0.3);
+      pointer-events: none;
+    }
+  }
+}
+
+.priority-bar {
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 4px;
+  background: var(--priority-color);
+  border-radius: 0 4px 4px 0;
+  box-shadow: 2px 0 10px color-mix(in srgb, var(--priority-color) 40%, transparent);
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-left: 8px;
+  margin-bottom: 10px;
+}
+
+.check-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: var(--text-muted);
+  transition: all 0.2s;
+  flex-shrink: 0;
+  margin-top: 2px;
+
+  .material-icons-round { font-size: 22px; }
+
+  &:hover { color: var(--primary); transform: scale(1.1); }
+
+  &.checked {
+    color: var(--success);
+    .material-icons-round { font-size: 22px; }
+  }
+}
+
+.task-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1;
+}
+
+.category-badge, .priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+  .material-icons-round { font-size: 13px; }
+}
+
+.card-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.action-btn {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+
+  .material-icons-round { font-size: 16px; }
+
+  &:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+
+  &.ai-btn:hover {
+    background: linear-gradient(135deg, #6c63ff, #a89cff);
+    border-color: var(--primary);
+  }
+
+  &.delete-btn:hover {
+    background: var(--danger);
+    border-color: var(--danger);
+  }
+}
+
+.card-body {
+  margin-left: 8px;
+  margin-bottom: 10px;
+}
+
+.task-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.task-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: 8px;
+  margin-bottom: 10px;
+}
+
+.tag {
+  background: rgba(108, 99, 255, 0.1);
+  border: 1px solid rgba(108, 99, 255, 0.2);
+  color: var(--primary-light);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 8px;
+  flex-wrap: wrap;
+}
+
+.best-time {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--primary-light);
+  background: rgba(108, 99, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 8px;
+
+  .material-icons-round { font-size: 14px; }
+}
+
+.due-date {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-muted);
+  .material-icons-round { font-size: 14px; }
+
+  &.overdue-text {
+    color: var(--danger);
+    font-weight: 600;
+  }
+}
+
+.ai-panel {
+  margin-top: 12px;
+  background: linear-gradient(135deg, rgba(108, 99, 255, 0.1), rgba(168, 156, 255, 0.05));
+  border: 1px solid rgba(108, 99, 255, 0.25);
+  border-radius: 12px;
+  padding: 14px;
+  animation: slideDown 0.3s ease;
+}
+
+.ai-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-light);
+  margin-bottom: 12px;
+
+  .material-icons-round {
+    font-size: 16px;
+    color: var(--primary);
+    animation: pulse 2s infinite;
+  }
+}
+
+.ai-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  line-height: 1.5;
+
+  &:last-child { margin-bottom: 0; }
+
+  .material-icons-round {
+    font-size: 14px;
+    color: var(--primary-light);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  strong { color: var(--text); margin-right: 4px; }
+
+  &.tip {
+    background: rgba(108, 99, 255, 0.08);
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--primary-light);
+  }
+}
+
+.delete-confirm {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 15, 26, 0.95);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  animation: fadeIn 0.2s ease;
+  backdrop-filter: blur(4px);
+
+  .warn-icon {
+    font-size: 32px;
+    color: var(--warning);
+  }
+
+  p {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+
+  button {
+    padding: 8px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .btn-no {
+    background: var(--bg-input);
+    color: var(--text);
+    border: 1px solid var(--border);
+    &:hover { border-color: var(--text-muted); }
+  }
+
+  .btn-yes {
+    background: var(--danger);
+    color: white;
+    &:hover { background: #c0392b; transform: scale(1.03); }
+  }
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

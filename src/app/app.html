@@ -1,0 +1,160 @@
+<div class="app-wrapper">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="material-icons-round logo-icon">psychology</span>
+      <div>
+        <h1>TaskMind AI</h1>
+        <p>AI-Powered Manager</p>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-num">{{ stats().total }}</span>
+        <span class="stat-label">Total</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num pending-num">{{ stats().pending }}</span>
+        <span class="stat-label">Pending</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num done-num">{{ stats().completed }}</span>
+        <span class="stat-label">Done</span>
+      </div>
+      <div class="stat-card" [class.fire]="stats().urgent > 0">
+        <span class="stat-num urgent-num">{{ stats().urgent }}</span>
+        <span class="stat-label">Urgent</span>
+      </div>
+    </div>
+
+    <!-- Progress Ring -->
+    <div class="progress-section">
+      <p class="progress-label">Completion Rate</p>
+      <div class="progress-ring-wrap">
+        <svg viewBox="0 0 80 80" class="ring-svg">
+          <circle cx="40" cy="40" r="32" class="ring-bg"/>
+          <circle
+            cx="40" cy="40" r="32"
+            class="ring-fill"
+            [style.stroke-dasharray]="201"
+            [style.stroke-dashoffset]="201 - (201 * stats().completion / 100)"
+          />
+        </svg>
+        <div class="ring-label">{{ stats().completion }}%</div>
+      </div>
+    </div>
+
+    <!-- AI Tip of the Day -->
+    <div class="ai-tip-card">
+      <div class="ai-tip-header">
+        <span class="material-icons-round">auto_awesome</span>
+        AI Daily Tip
+      </div>
+      <p>Use the <strong>best time</strong> badges on each task card to schedule your day optimally. High-energy tasks should be done in the morning!</p>
+    </div>
+
+    <button class="add-btn-sidebar" (click)="openAdd()">
+      <span class="material-icons-round">add_circle</span>
+      New Task
+    </button>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="greeting">
+        <h2>{{ greeting }} {{ timeEmoji }}</h2>
+        <p>You have <strong>{{ stats().pending }}</strong> tasks pending</p>
+      </div>
+      <button class="add-btn-top" (click)="openAdd()">
+        <span class="material-icons-round">add</span>
+        Add Task
+      </button>
+    </header>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="search-box">
+        <span class="material-icons-round">search</span>
+        <input
+          type="text"
+          placeholder="Search tasks..."
+          [value]="searchQuery()"
+          (input)="searchQuery.set($any($event.target).value)"
+        />
+        @if (searchQuery()) {
+          <button class="clear-search" (click)="searchQuery.set('')">
+            <span class="material-icons-round">close</span>
+          </button>
+        }
+      </div>
+
+      <select class="filter-select" [value]="sortBy()" (change)="sortBy.set($any($event.target).value)">
+        <option value="created">Newest First</option>
+        <option value="priority">By Priority</option>
+        <option value="dueDate">By Due Date</option>
+        <option value="category">By Category</option>
+      </select>
+
+      <select class="filter-select" [value]="filterPriority()" (change)="filterPriority.set($any($event.target).value)">
+        @for (p of priorities; track p.value) {
+          <option [value]="p.value">{{ p.label }}</option>
+        }
+      </select>
+
+      <select class="filter-select" [value]="filterCategory()" (change)="filterCategory.set($any($event.target).value)">
+        @for (c of categories; track c.value) {
+          <option [value]="c.value">{{ c.label }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      @for (tab of tabs; track tab.id) {
+        <button
+          class="tab-btn"
+          [class.active]="activeTab() === tab.id"
+          (click)="activeTab.set(tab.id)"
+        >
+          <span class="material-icons-round">{{ tab.icon }}</span>
+          {{ tab.label }}
+          @if (tab.id === 'urgent' && stats().urgent > 0) {
+            <span class="badge">{{ stats().urgent }}</span>
+          }
+        </button>
+      }
+    </div>
+
+    <!-- Task Grid -->
+    <div class="task-grid">
+      @if (filteredTasks().length === 0) {
+        <div class="empty-state">
+          <span class="material-icons-round empty-icon">inbox</span>
+          <h3>No tasks found</h3>
+          <p>{{ searchQuery() ? 'Try a different search' : 'Add your first task to get started!' }}</p>
+          @if (!searchQuery()) {
+            <button class="add-btn-empty" (click)="openAdd()">
+              <span class="material-icons-round">add_circle</span>
+              Add Task
+            </button>
+          }
+        </div>
+      }
+
+      @for (task of filteredTasks(); track task.id) {
+        <app-task-card [task]="task" (edit)="openEdit($event)" />
+      }
+    </div>
+  </main>
+
+  <!-- Task Form Modal -->
+  @if (showForm()) {
+    <app-task-form [editTask]="editTask()" (formClose)="closeForm()" />
+  }
+</div>

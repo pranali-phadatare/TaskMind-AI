@@ -1,0 +1,146 @@
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>
+        <span class="material-icons-round">{{ editTask ? 'edit_note' : 'add_task' }}</span>
+        {{ editTask ? 'Edit Task' : 'New Task' }}
+      </h2>
+      <button class="close-btn" (click)="close()">
+        <span class="material-icons-round">close</span>
+      </button>
+    </div>
+
+    <form (ngSubmit)="submit()" class="form-body">
+
+      <!-- Title -->
+      <div class="field">
+        <label>Task Title *</label>
+        <div class="input-wrapper">
+          <span class="material-icons-round field-icon">title</span>
+          <input
+            type="text"
+            [(ngModel)]="title"
+            name="title"
+            placeholder="e.g., Submit urgent project report..."
+            (input)="onTitleChange()"
+            required
+            autocomplete="off"
+          />
+        </div>
+
+        <!-- AI Priority Detection Banner -->
+        @if (detectedPriority) {
+          <div class="ai-detect-banner">
+            <span class="material-icons-round">auto_awesome</span>
+            <span>AI detected <strong>{{ detectedPriority | titlecase }}</strong> priority based on your title</span>
+            <button type="button" class="apply-btn" (click)="applyDetectedPriority()">Apply</button>
+          </div>
+        }
+      </div>
+
+      <!-- Description -->
+      <div class="field">
+        <label>Description</label>
+        <div class="input-wrapper">
+          <span class="material-icons-round field-icon">notes</span>
+          <textarea
+            [(ngModel)]="description"
+            name="description"
+            placeholder="Add details..."
+            rows="3"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Priority & Category Row -->
+      <div class="row-2">
+        <div class="field">
+          <label>Priority</label>
+          <div class="priority-grid">
+            @for (p of priorities; track p.value) {
+              <button
+                type="button"
+                class="priority-btn"
+                [class.active]="priority === p.value"
+                [style.--p-color]="p.color"
+                (click)="priority = p.value"
+              >
+                <span class="material-icons-round">{{ p.icon }}</span>
+                {{ p.label }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Category</label>
+          <div class="input-wrapper">
+            <span class="material-icons-round field-icon">category</span>
+            <select [(ngModel)]="category" name="category">
+              @for (c of categories; track c.value) {
+                <option [value]="c.value">{{ c.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Due Date -->
+      <div class="field">
+        <label>Due Date</label>
+        <div class="input-wrapper">
+          <span class="material-icons-round field-icon">event</span>
+          <input
+            type="date"
+            [(ngModel)]="dueDate"
+            name="dueDate"
+            [min]="getMinDate()"
+          />
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="field">
+        <label>Tags</label>
+        <div class="input-wrapper">
+          <span class="material-icons-round field-icon">label</span>
+          <input
+            type="text"
+            [(ngModel)]="tagInput"
+            name="tagInput"
+            placeholder="Type tag and press Enter..."
+            (keydown)="onTagKeydown($event)"
+            autocomplete="off"
+          />
+          <button type="button" class="add-tag-btn" (click)="addTag()">Add</button>
+        </div>
+        @if (tags.length > 0) {
+          <div class="tags-list">
+            @for (tag of tags; track tag) {
+              <span class="tag">
+                #{{ tag }}
+                <button type="button" (click)="removeTag(tag)">
+                  <span class="material-icons-round">close</span>
+                </button>
+              </span>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Actions -->
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="close()">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="!title.trim() || isSubmitting">
+          @if (isSubmitting) {
+            <span class="material-icons-round spin">autorenew</span>
+          } @else {
+            <span class="material-icons-round">{{ editTask ? 'save' : 'add_circle' }}</span>
+          }
+          {{ editTask ? 'Update Task' : 'Add Task' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
